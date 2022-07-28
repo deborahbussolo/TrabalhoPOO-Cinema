@@ -5,8 +5,8 @@ from sessao import Sessao
 from helpers import check_1, printa_matriz
 
 # Constantes de colunas e linhas da matriz de poltronas
-COLUNAS = 10
-LINHAS = 15
+COLUNAS = 2
+LINHAS = 2
 
 # Lista de letras para associar letra com número da poltrona
 letras = ["a", "b", "c", "d", "e", "f", "g",
@@ -65,6 +65,7 @@ class Sala:
             letra = poltrona[0]
             # Pega o número da poltrona
             numero = int(poltrona[1:])
+            # Caso as poltronas sejam inválidas adiciona às listas de erradas
             if letra not in letras:
                 letras_erradas.append(letra)
             if numero <= 0 or numero > len(self.get_cronograma()[id + " " + horario][0]):
@@ -72,9 +73,13 @@ class Sala:
             if letra in letras and numero <= len(self.get_cronograma()[id + " " + horario][0]) and numero > 0 and self.get_cronograma()[id + " " + horario][letras.index(letra)][numero - 1] == 1:
                 poltronas_indisponiveis.append(poltrona)
 
+        # Caso as poltronas sejam inválidas
         if letras_erradas or numeros_errados or poltronas_indisponiveis:
+            # Retornas as listas de erradas
             return [letras_erradas, numeros_errados, poltronas_indisponiveis]
 
+        # Se tudo estiver correto
+        # Pra cada poltronas na lista de poltronas a serem preenchidas
         for poltrona in poltronas:
             # Pega a letra da poltrona
             letra = poltrona[0]
@@ -88,6 +93,8 @@ class Sala:
             linha[numero - 1] = 1
             # Atualiza a linha na matriz de poltronas
             self.get_cronograma()[id + " " + horario][indice] = linha
+
+        # Retorna nenhuma lista de erradas
         return []
 
     # Método que remove da matriz de poltronas as poltronas a serem removidas
@@ -132,19 +139,37 @@ class Sala:
         print(
             t.center((int(len(self.get_cronograma()[id + " " + horario][0])*6)) - 4))
 
-    # print_info imprime os informações da sala
+    # print_info imprime os informações do cronograma da sala
     def print_info(self):
-        # MODIFICAR FUNCAO PARA PRINTAR CADA SESSAO E CADA HORARIO DE CADA FUNCAO E SUAS POLTRONAS
-        print(f"Cronograma: {self.cronograma}")
-        print("Poltronas:")
-        # printa_matriz(self.poltronas)
-        print(f"Sessões: {self.sessoes}")
+
+        # Pra cada sessao na lista de sessões
+        for sessao in self.get_sessoes():
+            # Printa o nome da sessão
+            print(sessao.get_nome().upper(), end=" ")
+            # Printa as informações da sessão
+            sessao.print_info()
+            # Pra cada elemento do cronograma
+            for chave in self.get_cronograma():
+                # Se o id do elemento for igual ao id da sessão
+                if chave.split()[0] == sessao.get_id():
+                    # Pra cada horário da sessão
+                    for horario in sessao.get_horarios():
+                        # Se o horário do elemento for igual ao horário da sessão
+                        if horario == chave.split()[1]:
+                            # Printa o horário da sessão
+                            print(f"{horario}: ")
+                            # Printa a matriz de poltronas respectiva ao horário
+                            self.printar_poltronas(sessao.get_id(), horario)
+                            print()
 
     # Função que adiciona uma sessão à sala (cronograma)
+
     def adicionar_sessao(self, sessao):
 
+        # Pra cada horário da sessão
         for horario in sessao.get_horarios():
 
+            # Adiciona uma matriz de poltronas vazias no cronograma respectivo ao horário da sessão
             self.cronograma[sessao.get_id() + " " +
                             horario] = self.poltronas[:]
 
@@ -155,21 +180,25 @@ class Sala:
     def remover_sessao(self, sessao):
 
         # Remove a sessão do cronograma
+        # Pra cada horário da sessão
         for horario in sessao.get_horarios():
+            # Se a sessão e seu respectivo horário estiverem no cronograma
             if (sessao.get_id() + " " + horario) in self.cronograma:
+                # Remove a matriz de poltronas do cronograma
                 del self.cronograma[sessao.get_id() + " " + horario]
 
         # Remove a sessão da lista de sessões
         if sessao in self.sessoes:
             self.sessoes.remove(sessao)
 
-    # Função que devolve a sessão que passara em um determinado horário
+    # Função que devolve as sessões que passarão em um determinado horário
 
-    def get_sessao_from_cronograma(self):
+    def get_sessao_from_cronograma(self, horario):
         for chave in self.cronograma:
-            for sessao in self.sessoes:
-                if sessao.get_id() == chave.split()[0]:
-                    sessao.print_info()
+            if horario == chave.split()[1]:
+                for sessao in self.sessoes:
+                    if sessao.get_id() == chave.split()[0]:
+                        sessao.print_info()
 
 
 # Exemplo de lista de salas

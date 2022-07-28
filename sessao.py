@@ -73,8 +73,6 @@ class Sessao(Filme):
         self.set_DDD(DDD)
         self.set_legenda(legenda)
 
-    # __eq__ compara se duas sessões são iguais
-
 
 # Exemplo de lista de sessões:
 # sessoes = [Sessao("Titanic", ["drama", "romance"], ["19:00", "20:00"], False, True), Sessao("Titanic", ["drama", "romance"], ["19:00", "20:00"], True, False), Sessao("The Godfather", [

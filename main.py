@@ -1,16 +1,17 @@
+# Importa tudo que é necessário para o funcionamento do programa
 from filme import Filme
 from helpers import most_empty, lugares_disponiveis, lista_strings_para_string, verificador_input
 from sessao import Sessao
 from sala import salas
 from pagamento import Pagamento
-# Função que preenche as poltronas de uma sala
+
 
 # Lista de pagamentos (usar para mostrar o total faturado para o administrador)
 pagamentos = []
 
+# Listas de sessoes e filmes
 sessoes = []
 filmes = []
-# DAR UM JEITO DE USAR O CRONOGRAMA DA SALA
 
 # Função que preenche as poltronas de uma sala
 
@@ -65,6 +66,8 @@ def printar_filmes():
     print()
     print("Lista de filmes disponíveis:")
     print()
+    if len(filmes) == 0:
+        print("Não há filmes disponíveis!")
     for filme in range(len(filmes)):
         print(f"{filme + 1}: ", end="")
         filmes[filme].print_info()
@@ -107,6 +110,7 @@ def mostrar_sessao(numero_da_sessao, mostrar_horarios=False):
     else:
         print("2D", end=' ')
 
+    # Se for pra mostrar os horários
     if mostrar_horarios:
         print()
         # Mostra os horários da sessão
@@ -146,10 +150,11 @@ def comprovante(numero_da_sessao, horario, poltronas, pagamento):
     pagamento.print_info()
     print("-----------------------------------------------------")
 
-# Função principal do programa
 
+# Função que mostra as sessões de cada sala
 
 def mostra_sessoes_de_cada_sala(printar_indice=False):
+    # Pra cada sala
     for sala in range(len(salas)):
         print()
         print(f"Sala {sala + 1}:")
@@ -199,7 +204,7 @@ def alterar_sessao(numero_da_sessao=None):
     novo_DDD = input("É 3D? (S/N) ").upper() != 'N'
     # Pergunta se a sessão é legendada ou não
 
-    novo_legenda = input("É legendada? (S/N) ").upper() != 'N'
+    novo_legenda = input("É legendado? (S/N) ").upper() != 'N'
     # Modifica as informações da sessão
     sessoes[numero_da_sessao - 1].modifica_info(
         novo_nome, novo_genero, novos_horarios, novo_DDD, novo_legenda)
@@ -294,14 +299,16 @@ def pagamento(quantidade_ingressos, quantidade_meias, numero_da_sessao, horario,
             print("-----------------------------------------------------")
             break
 
-# Função que calcula e printa a fatura atual
 
-
+# Função que mostra o cronograma de uma sala
 def mostrar_cronograma_de_uma_sala():
-    # DEIXAR O ADMIN ESCOLHER UMA SALA
-    # PRA CADA ELEMENTO SESSAO DO CRONOGRAMA
-    # PRA CADA HORARIO DE CADA SESSAO
-    # MOSTRAR AS POLTRONAS
+    numero_da_sala = verificador_input(
+        "da sala (pra ver o cronograma)", salas, 'in', "Opção inválida!")
+    if len(salas[numero_da_sala - 1].get_sessoes()) == 0:
+        print("Não há sessões nessa sala!")
+    salas[numero_da_sala - 1].print_info()
+
+# Função que calcula e printa a fatura atual
 
 
 def total_faturado():
@@ -380,7 +387,8 @@ def usuario():
 
     # Printa a lista de filmes
     printar_filmes()
-
+    if len(filmes) == 0:
+        return 2
     # Pergunta qual o número do filme que o usuário deseja
     numero_do_filme = verificador_input(
         "do filme", filmes, "in", "Opção inválida")
@@ -416,7 +424,7 @@ def usuario():
 
     # Quantidade de lugares disponíveis na sala mais vazia que passa a sessão escolhida
     quantidade_lugares_disponiveis_sala_mais_vazia = most_empty([[sala.get_cronograma()[sessoes[numero_da_sessao - 1].get_id() + " " + horario] for sessao in sala.get_sessoes(
-    ) if sessao == sessoes[numero_da_sessao - 1]] for sala in salas])
+    ) if sessao.get_id() == sessoes[numero_da_sessao - 1].get_id()] for sala in salas])
 
     # Pergunta quantos ingressos o usuário deseja comprar
     quantidade_ingressos = verificador_input("de ingressos", [

@@ -1,4 +1,4 @@
-# PENSAR SE TEM ALGUMA OUTRA COISA PRA FAZER AQUI
+# Classe Pagamento
 class Pagamento():
 
     # Construtor da classe Pagamento, recebe os atributos do pagamento (ingressos, meias, forma = "Dinheiro")
